@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon horaire</title>
+<meta name="theme-color" content="#1E5BD6">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Horaire">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#EDF0F4;--sf:#fff;--ink:#16202E;--mute:#5A6678;--line:#D5DCE5;--ac:#1E5BD6;--onac:#fff;--dg:#C23B3B;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1621;--sf:#18212F;--ink:#E9EEF5;--mute:#93A0B3;--line:#2A3647;--ac:#6EA2FF;--onac:#0F1621;--dg:#F07B7B;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1621;--sf:#18212F;--ink:#E9EEF5;--mute:#93A0B3;--line:#2A3647;--ac:#6EA2FF;--onac:#0F1621;--dg:#F07B7B;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.4 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+main{max-width:480px;margin:0 auto;padding:16px 16px 96px}
+h1{font-size:26px;margin:4px 0 14px;font-weight:700;letter-spacing:-.01em}
+h2{font-size:18px;margin:0;font-weight:700;text-align:center;flex:1}
+h3{margin:0 0 12px;font-size:20px}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.card small,.hint{color:var(--mute)}
+.hint{margin:0 0 10px;font-size:14px}
+.nav{display:flex;align-items:center;gap:8px;margin:6px 0 10px}
+.ic{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--sf);font-size:24px;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{text-align:center;font-size:12px;color:var(--mute);padding:4px 0;font-weight:500}
+.cell{aspect-ratio:1/1.08;border-radius:10px;background:var(--sf);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;min-width:0}
+.cell .n{font-size:11px;opacity:.75}
+.cell .k{font-weight:700;font-size:13px;min-height:20px}
+.cell.tall{aspect-ratio:1/1.5}
+.cell .t{font-size:10px;line-height:1.2;margin-top:2px;font-weight:500}
+.cell.today{outline:2px solid var(--ac);outline-offset:1px}
+.cell.sel{box-shadow:0 0 0 3px var(--ink)}
+.pal{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.pc{min-width:48px;height:44px;padding:0 12px;border-radius:12px;border:2px solid transparent;background:var(--c);color:var(--t);font-weight:700}
+.pc.er{background:var(--sf);color:var(--ink);border-color:var(--line);font-weight:500}
+.pc.on{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
+.list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:left;width:100%;min-height:60px}
+.chip{min-width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:700;padding:0 6px;flex:none}
+.rt{display:flex;flex-direction:column}
+.rt small{color:var(--mute)}
+.tot{display:flex;align-items:center;gap:10px;padding:6px 0}
+.tot .chip{min-width:34px;height:34px;font-size:14px;border-radius:9px}
+.tot span:nth-child(2){flex:1}
+.sum{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-weight:700;display:flex;justify-content:space-between}
+.btn{min-height:46px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--sf);font-weight:500;width:100%}
+.btn.primary{background:var(--ac);color:var(--onac);border-color:var(--ac);font-weight:700}
+.btn.danger{color:var(--dg);border-color:var(--dg)}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--sf);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+.tabs button{flex:1;height:48px;border:0;background:none;border-radius:12px;font-weight:500;color:var(--mute)}
+.tabs button.on{color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,transparent);font-weight:700}
+#modal{position:fixed;inset:0;z-index:10;display:flex;align-items:flex-end;justify-content:center}
+#modal[hidden]{display:none}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.sheet{position:relative;background:var(--sf);width:100%;max-width:480px;max-height:92%;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet label{display:block;font-size:14px;color:var(--mute);margin:0 0 10px}
+.sheet input:not([type=checkbox]){display:block;width:100%;height:46px;margin-top:4px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--bg);color:var(--ink)}
+.sheet .chk{display:flex;align-items:center;gap:10px;color:var(--ink);min-height:44px}
+.chk input{width:22px;height:22px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sw{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px}
+.swb{width:40px;height:40px;border-radius:50%;border:2px solid var(--sf);padding:0}
+.swb.on{box-shadow:0 0 0 3px var(--ink)}
+.acts{display:flex;flex-direction:column;gap:8px}
+.err{color:var(--dg);margin:0 0 10px;font-size:14px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav class="tabs" id="tabs"></nav>
+<div id="modal" hidden></div>
+<script>
+const MOIS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const JOURS=['Lu','Ma','Me','Je','Ve','Sa','Di'];
+const JLONG=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const COLORS=['#E8A33D','#3B82C4','#5B4BB7','#2E9E7A','#D6544F','#8A94A6','#C2579B','#6B8E23','#14A3B8','#E36B2C','#7A5C3E','#B5A100'];
+const DEF=[
+{id:'A149',label:'A149',s:'15:00',e:'21:00',p:0,c:COLORS[1]},
+{id:'A66',label:'A66',s:'14:00',e:'22:00',p:0,c:COLORS[2]},
+{id:'A67',label:'A67',s:'17:00',e:'21:00',p:0,c:COLORS[3]},
+{id:'FO',label:'Formation',s:'',e:'',p:0,c:COLORS[7]},
+{id:'JD',label:'Congé',s:'',e:'',p:0,c:COLORS[6]},
+{id:'JF',label:'Congé',s:'',e:'',p:0,c:COLORS[5]},
+{id:'M166',label:'M166',s:'06:50',e:'12:50',p:0,c:COLORS[0]},
+{id:'M296',label:'M296',s:'06:50',e:'13:56',p:0,c:COLORS[9]},
+{id:'M95',label:'M95',s:'06:50',e:'14:56',p:0,c:COLORS[4]},
+{id:'M96',label:'M96',s:'06:50',e:'10:50',p:0,c:COLORS[8]},
+{id:'Off',label:'Congé',s:'',e:'',p:0,c:COLORS[10]}];
+const SK='horaire-v2';
+function load(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r)}catch(e){}return null}
+function save(){try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}}
+let S=load();
+if(!S||!Array.isArray(S.codes)||!S.days)S={codes:DEF.map(c=>({...c})),days:{}};
+const now=new Date();
+let tab='h',ym={y:now.getFullYear(),m:now.getMonth()},tool=S.codes[0]?S.codes[0].id:null,sel=null,edit=null,confirmClear=false;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const byId=id=>S.codes.find(c=>c.id===id);
+const key=(y,m,d)=>y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+const todayKey=()=>key(now.getFullYear(),now.getMonth(),now.getDate());
+function textOn(h){const n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255;return (0.299*r+0.587*g+0.114*b)>150?'#16202E':'#fff'}
+function hrs(c){if(!c.s||!c.e)return 0;const a=c.s.split(':'),b=c.e.split(':');let m=(Number(b[0])*60+Number(b[1]))-(Number(a[0])*60+Number(a[1]));if(m<=0)m+=1440;m-=Number(c.p)||0;return Math.max(m,0)/60}
+const fh=h=>(Math.round(h*100)/100).toString().replace('.',',')+' h';
+const ft=t=>t.replace(/^0/,'').replace(':','h').replace(/h00$/,'h');
+function longDate(k){const p=k.split('-').map(Number),d=new Date(p[0],p[1]-1,p[2]);return JLONG[d.getDay()]+' '+p[2]+' '+MOIS[p[1]-1].toLowerCase()}
+function info(k){const c=byId(S.days[k]);if(!c)return '<small>Rien d’encodé.</small>';
+return '<div class="row" style="border:0;padding:0;min-height:0"><span class="chip" style="background:'+c.c+';color:'+textOn(c.c)+'">'+esc(c.id)+'</span><span class="rt"><b>'+esc(c.label)+'</b><small>'+(c.s&&c.e?c.s+' à '+c.e+', '+fh(hrs(c)):'Sans horaire')+'</small></span></div>'}
+function nav(){return '<div class="nav"><button class="ic" data-nav="-1" aria-label="Mois précédent">‹</button><h2>'+MOIS[ym.m]+' '+ym.y+'</h2><button class="ic" data-nav="1" aria-label="Mois suivant">›</button></div>'}
+function grid(inter){const y=ym.y,m=ym.m,first=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate();
+let h=JOURS.map(j=>'<div class="wd">'+j+'</div>').join('');
+for(let i=0;i<first;i++)h+='<div></div>';
+for(let d=1;d<=n;d++){const k=key(y,m,d),c=byId(S.days[k]);
+const st=c?'background:'+c.c+';color:'+textOn(c.c)+';border-color:'+c.c:'';
+h+='<button class="cell'+(inter?'':' tall')+(k===todayKey()?' today':'')+(!inter&&sel===k?' sel':'')+'" data-k="'+k+'" style="'+st+'" aria-label="'+d+' '+MOIS[m]+(c?', '+esc(c.label):'')+'"><span class="n">'+d+'</span><span class="k">'+(c?esc(c.id):'')+'</span>'+(!inter&&c&&c.s&&c.e?'<span class="t">'+ft(c.s)+'<br>'+ft(c.e)+'</span>':'')+'</button>'}
+return '<div class="grid">'+h+'</div>'}
+function viewH(){const y=ym.y,m=ym.m,n=new Date(y,m+1,0).getDate(),cnt={};let tot=0;
+for(let d=1;d<=n;d++){const c=byId(S.days[key(y,m,d)]);if(c){cnt[c.id]=(cnt[c.id]||0)+1;tot+=hrs(c)}}
+const ids=S.codes.filter(c=>cnt[c.id]);
+let h='<h1>Mon horaire</h1><div class="card"><small>Aujourd’hui, '+longDate(todayKey())+'</small><div style="margin-top:8px">'+info(todayKey())+'</div></div>'+nav()+grid(false);
+if(sel)h+='<div class="card"><small>'+longDate(sel)+'</small><div style="margin-top:8px">'+info(sel)+'</div></div>';
+h+='<div class="card"><b>Résumé du mois</b>';
+if(!ids.length)h+='<p class="hint" style="margin:8px 0 0">Aucun horaire encodé pour ce mois. Ouvrez l’onglet Encoder pour le remplir.</p>';
+else h+=ids.map(c=>'<div class="tot"><span class="chip" style="background:'+c.c+';color:'+textOn(c.c)+'">'+esc(c.id)+'</span><span>'+esc(c.label)+', '+cnt[c.id]+' j</span><span>'+(hrs(c)?fh(hrs(c)*cnt[c.id]):'')+'</span></div>').join('')+'<div class="sum"><span>Total</span><span>'+fh(tot)+'</span></div>';
+return h+'</div>'}
+function viewE(){let h='<h1>Encoder le mois</h1>'+nav();
+if(!S.codes.length)return h+'<p class="hint">Créez d’abord au moins un code dans l’onglet Codes.</p>';
+h+='<p class="hint">Choisissez un code, puis touchez les jours. Touchez un jour déjà rempli avec le même code pour le vider.</p><div class="pal">'+S.codes.map(c=>'<button class="pc'+(tool===c.id?' on':'')+'" data-tool="'+esc(c.id)+'" style="--c:'+c.c+';--t:'+textOn(c.c)+'">'+esc(c.id)+'</button>').join('')+'<button class="pc er'+(tool===''?' on':'')+'" data-tool="">Effacer</button></div>'+grid(true);
+return h+'<div style="margin-top:14px"><button class="btn'+(confirmClear?' danger':'')+'" data-clear>'+(confirmClear?'Confirmer : vider le mois':'Vider le mois')+'</button></div>'}
+function viewC(){return '<h1>Codes horaires</h1><div class="list">'+S.codes.map(c=>'<button class="row" data-edit="'+esc(c.id)+'"><span class="chip" style="background:'+c.c+';color:'+textOn(c.c)+'">'+esc(c.id)+'</span><span class="rt"><b>'+esc(c.label)+'</b><small>'+(c.s&&c.e?c.s+' à '+c.e+(c.p?', pause '+c.p+' min':'')+', '+fh(hrs(c)):'Sans horaire')+'</small></span></button>').join('')+'</div><button class="btn primary" data-add>Ajouter un code</button>'}
+function render(){const y=window.scrollY;$('#app').innerHTML=tab==='h'?viewH():tab==='e'?viewE():viewC();
+$('#tabs').innerHTML=[['h','Horaire'],['e','Encoder'],['c','Codes']].map(t=>'<button data-tab="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'">'+t[1]+'</button>').join('');
+window.scrollTo(0,y)}
+function openEdit(id){const o=id?byId(id):null;edit={orig:id||null,c:o?{...o}:{id:'',label:'',s:'08:00',e:'16:00',p:0,c:COLORS[S.codes.length%COLORS.length]},nohrs:!!o&&!o.s,err:'',del:false};drawModal()}
+function snap(){if(!edit)return;const g=i=>document.getElementById(i),c=edit.c;if(g('f-id'))c.id=g('f-id').value;if(g('f-label'))c.label=g('f-label').value;if(g('f-s')){c.s=g('f-s').value;c.e=g('f-e').value;c.p=Number(g('f-p').value)||0}}
+function drawModal(){const m=$('#modal');if(!edit){m.innerHTML='';m.hidden=true;return}
+const e=edit,c=e.c;m.hidden=false;
+m.innerHTML='<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-label="Code horaire"><h3>'+(e.orig?'Modifier le code':'Nouveau code')+'</h3>'
++'<label>Code (1 à 4 caractères)<input id="f-id" maxlength="4" value="'+esc(c.id)+'"></label>'
++'<label>Nom<input id="f-label" value="'+esc(c.label)+'" placeholder="Ex. : Matin"></label>'
++'<label class="chk"><input type="checkbox" id="f-no"'+(e.nohrs?' checked':'')+'> Sans horaire (repos, congé…)</label>'
++(e.nohrs?'':'<div class="two"><label>Début<input type="time" id="f-s" value="'+c.s+'"></label><label>Fin<input type="time" id="f-e" value="'+c.e+'"></label></div><label>Pause non comptée (minutes)<input type="number" id="f-p" min="0" step="5" value="'+(c.p||0)+'"></label>')
++'<div class="sw">'+COLORS.map(x=>'<button class="swb'+(x===c.c?' on':'')+'" data-col="'+x+'" style="background:'+x+'" aria-label="Couleur"></button>').join('')+'</div>'
++(e.err?'<p class="err">'+e.err+'</p>':'')
++'<div class="acts"><button class="btn primary" data-save>Enregistrer</button><button class="btn" data-close>Annuler</button>'+(e.orig?'<button class="btn danger" data-del>'+(e.del?'Confirmer la suppression':'Supprimer')+'</button>':'')+'</div></div>'}
+function doSave(){snap();const c=edit.c;c.id=c.id.trim();c.label=c.label.trim()||c.id;
+if(!c.id)edit.err='Indiquez un code.';
+else if(S.codes.some(x=>x.id===c.id&&x.id!==edit.orig))edit.err='Ce code existe déjà.';
+else if(!edit.nohrs&&(!c.s||!c.e))edit.err='Indiquez l’heure de début et de fin.';
+else{if(edit.nohrs){c.s='';c.e='';c.p=0}
+if(edit.orig){const i=S.codes.findIndex(x=>x.id===edit.orig);S.codes[i]=c;if(c.id!==edit.orig){for(const k in S.days)if(S.days[k]===edit.orig)S.days[k]=c.id;if(tool===edit.orig)tool=c.id}}
+else{S.codes.push(c);if(tool===null)tool=c.id}
+save();edit=null;drawModal();render();return}
+drawModal()}
+function doDel(){snap();if(!edit.del){edit.del=true;drawModal();return}
+const id=edit.orig;S.codes=S.codes.filter(c=>c.id!==id);for(const k in S.days)if(S.days[k]===id)delete S.days[k];
+if(tool===id)tool=S.codes[0]?S.codes[0].id:null;save();edit=null;drawModal();render()}
+document.addEventListener('click',ev=>{const t=ev.target.closest('button,.scrim');if(!t)return;const d=t.dataset;
+if(d.tab){tab=d.tab;sel=null;confirmClear=false;render();window.scrollTo(0,0)}
+else if(d.nav){let m=ym.m+Number(d.nav),y=ym.y;if(m<0){m=11;y--}if(m>11){m=0;y++}ym={y:y,m:m};sel=null;confirmClear=false;render()}
+else if(d.k){if(tab==='e'){if(tool===null)return;const cur=S.days[d.k];if(tool===''||cur===tool)delete S.days[d.k];else S.days[d.k]=tool;save()}else sel=(sel===d.k?null:d.k);render()}
+else if('tool' in d){tool=d.tool;render()}
+else if('clear' in d){if(!confirmClear){confirmClear=true}else{const p=ym.y+'-'+String(ym.m+1).padStart(2,'0')+'-';for(const k in S.days)if(k.indexOf(p)===0)delete S.days[k];save();confirmClear=false}render()}
+else if(d.edit){openEdit(d.edit)}
+else if('add' in d){openEdit(null)}
+else if('save' in d){doSave()}
+else if('del' in d){doDel()}
+else if('close' in d){edit=null;drawModal()}
+else if(d.col){snap();edit.c.c=d.col;drawModal()}});
+document.addEventListener('change',ev=>{if(ev.target.id==='f-no'){snap();edit.nohrs=ev.target.checked;drawModal()}});
+render();
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>
